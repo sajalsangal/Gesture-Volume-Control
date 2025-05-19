@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import time
 import HandTrackingModule as htm
+import math
 
 cap = cv2.VideoCapture(0) #Video Object
 wCam, hCam = 640, 480 #custom video width and height
@@ -22,7 +23,6 @@ while True:
         and creating a line between them with line shape
     '''
     if(len(lmlist) != 0):
-        print(lmlist[4], lmlist[8])
 
         x1, y1 = lmlist[4][1] , lmlist[4][2]
         x2, y2 = lmlist[8][1] , lmlist[8][2]
@@ -31,6 +31,13 @@ while True:
         cv2.circle(img , (x1, y1), 10 , (255,0,255), cv2.FILLED)
         cv2.circle(img, (x2, y2), 10, (255, 0, 255), cv2.FILLED)
         cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 3)
+        cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+
+        length = math.hypot(x2 - x1 , y2 - y1) #find length of line from x and y coordinates
+        print(length)
+
+        if length < 30: #When fingers come close
+            cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED) #change the color of the midpoint to give a button effect
 
     cTime = time.time()
     fps = 1 / (cTime - pTime)
