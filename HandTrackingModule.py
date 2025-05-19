@@ -25,16 +25,16 @@ class handDetector():
                     self.mpDraw.draw_landmarks(image, handLms, self.mpHands.HAND_CONNECTIONS)
         return image
 
-    def findPosition(self, flipped_image, handNo = 0, draw = True):
+    def findPosition(self, image, handNo = 0, draw = True):
         lmList = []
         if self.results.multi_hand_landmarks:
             myHand = self.results.multi_hand_landmarks[handNo]
             for id, lm in enumerate(myHand.landmark):
-                h, w, c = flipped_image.shape
+                h, w, c = image.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
                 lmList.append([id, cx, cy])
                 if draw:
-                    cv2.circle(flipped_image, (cx, cy), 10, (255, 0, 255), cv2.FILLED)
+                    cv2.circle(image, (cx, cy), 10, (255, 255, 255), cv2.FILLED)
 
         return lmList
 
