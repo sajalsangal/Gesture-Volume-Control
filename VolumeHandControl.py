@@ -33,8 +33,13 @@ while True:
         cv2.line(img, (x1,y1), (x2,y2), (255,255,255), 3)
         cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
 
-        length = math.hypot(x2 - x1 , y2 - y1) #find length of line from x and y coordinates
+        length = int(math.hypot(x2 - x1 , y2 - y1)) #find length of line from x and y coordinates
         print(length)
+        '''For fun
+            Change circle radius based on length value
+        
+        cv2.circle(img, (100, 100), length, (100, 50, 200), cv2.FILLED)
+        '''
 
         if length < 30: #When fingers come close
             cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED) #change the color of the midpoint to give a button effect
