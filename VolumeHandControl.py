@@ -3,6 +3,8 @@ import numpy as np
 import time
 import HandTrackingModule as htm
 import math
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 cap = cv2.VideoCapture(0) #Video Object
 wCam, hCam = 640, 480 #custom video width and height
@@ -11,15 +13,17 @@ cap.set(4, hCam)
 pTime = 0
 detector = htm.handDetector(detectionCon=0.7) #initialize hand detection object
 
+devices = AudioUtilities.GetSpeakers()
+interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+volume = interface.QueryInterface(IAudioEndpointVolume)
+#volume.GetMute()
+#volume.GetMasterVolumeLevel()
+volRange = volume.GetVolumeRange()
+volume.SetMasterVolumeLevel(-5.0, None)
+minVol = volRange[0]
+maxVol = volRange[1]
 
-from pycaw.pycaw import AudioUtilities
-device = AudioUtilities.GetSpeakers()
-volume = device.EndpointVolume
-print(f"Audio output: {device.FriendlyName}")
-print(f"- Muted: {bool(volume.GetMute())}")
-print(f"- Volume level: {volume.GetMasterVolumeLevel()} dB")
-print(f"- Volume range: {volume.GetVolumeRange()[0]} dB - {volume.GetVolumeRange()[1]} dB")
-volume.SetMasterVolumeLevel(-20.0, None)
+
 
 while True:
     success,img = cap.read() #img actually consists of a numpy array with pixel and BGR value
@@ -43,7 +47,14 @@ while True:
         cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
 
         length = int(math.hypot(x2 - x1 , y2 - y1)) #find length of line from x and y coordinates
-        print(length)
+        #print(length)
+
+
+        # hand range is from 30 - 150
+        # volume range is from -65 - 0
+
+        vol = np.interp(length, [30,150], [minVol, maxVol])
+        print(vol)
 
         if length < 30: #When fingers come close
             cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED) #change the color of the midpoint to give a button effect
