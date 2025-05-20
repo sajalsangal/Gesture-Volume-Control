@@ -9,8 +9,17 @@ wCam, hCam = 640, 480 #custom video width and height
 cap.set(3, wCam)
 cap.set(4, hCam)
 pTime = 0
-
 detector = htm.handDetector(detectionCon=0.7) #initialize hand detection object
+
+
+from pycaw.pycaw import AudioUtilities
+device = AudioUtilities.GetSpeakers()
+volume = device.EndpointVolume
+print(f"Audio output: {device.FriendlyName}")
+print(f"- Muted: {bool(volume.GetMute())}")
+print(f"- Volume level: {volume.GetMasterVolumeLevel()} dB")
+print(f"- Volume range: {volume.GetVolumeRange()[0]} dB - {volume.GetVolumeRange()[1]} dB")
+volume.SetMasterVolumeLevel(-20.0, None)
 
 while True:
     success,img = cap.read() #img actually consists of a numpy array with pixel and BGR value
@@ -35,14 +44,10 @@ while True:
 
         length = int(math.hypot(x2 - x1 , y2 - y1)) #find length of line from x and y coordinates
         print(length)
-        '''For fun
-            Change circle radius based on length value
-        
-        cv2.circle(img, (100, 100), length, (100, 50, 200), cv2.FILLED)
-        '''
 
         if length < 30: #When fingers come close
             cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED) #change the color of the midpoint to give a button effect
+
 
     cTime = time.time()
     fps = 1 / (cTime - pTime)
