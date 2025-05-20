@@ -55,6 +55,7 @@ while True:
 
         vol = np.interp(length, [30,150], [minVol, maxVol])
         print(vol)
+        volume.SetMasterVolumeLevel(vol, None)
 
         if length < 30: #When fingers come close
             cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED) #change the color of the midpoint to give a button effect
